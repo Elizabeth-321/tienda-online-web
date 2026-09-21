@@ -1,0 +1,95 @@
+/* css  del login */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+/* Aca se importo  la tipografia  para que todo tenga la misma letraa */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+   
+}
+
+h1 {
+  text-align: center;   
+  margin-bottom: 20px;  
+}
+
+.login-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.28); 
+  z-index: 0;   /* debajo */
+}
+
+.login-body {
+  /* Ruta a tu imagen de la juguetería */
+  position: relative;
+  display: flex;
+  justify-content: center;   
+  align-items: center;       
+  min-height: 100vh;        
+  background: url('./img/fondo-jugueteria.avif') no-repeat center center;
+  background-size: cover;   
+
+}
+
+.wrapper{
+  z-index: 1;
+  max-width: 480px;   
+  margin: 70px auto;  
+  padding: 35px;      
+  box-shadow: 0 0 40px rgb(237, 26, 124);
+  border-radius: 15px;
+  background: #fff;
+
+}
+/*.wrapper:hover{
+    animation: animate 3s linear infinite;
+}
+@keyframes animate {
+    100%{
+        filter:hue-rotate(360deg);
+    }
+    
+}*le da /
+
+.form-wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+h2{
+    font-size: 40px;
+    color: #000;
+    text-align: center;
+
+}
+button{
+    position: relative;
+    width: 100%;
+    height: 40px;
+    background: #0ef;
+    box-shadow: 0 0 10px rgb(255, 0, 140);
+    font-size: 16px;
+    color: #000;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 30px;
+    border: none;
+    outline: none;
+}
+
+/* css de...*/
+
+
+
