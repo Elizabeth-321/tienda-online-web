@@ -4,127 +4,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
+  <title>ToyWorld - Panel Principal</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-body-secondary">
+<body >
 
-  <nav class="navbar bg-white border-bottom">
-    <div class="container">
-      <span class="navbar-brand mb-0 h1"> 🧸ToyWorld</span>
-      <div class="d-flex align-items-center gap-3">
-        <span class="small text-secondary" id="navUsuario"></span>
-        <button class="btn btn-outline-secondary btn-sm" id="btnSalir">Cerrar sesión</button>
-      </div>
-    </div>
-  </nav>
-
-  <main class="container py-4">
-
-    <h1 class="h3">Hola, <span id="nombreUsuario"></span></h1>
-    <p class="text-secondary">
-      Estás dentro como <span class="badge text-bg-secondary" id="badgeRol"></span>
-    </p>
-
-    <div class="row g-3 mt-2">
-
-      <div class="col-md-4">
-        <div class="card h-100">
-          <div class="card-body">
-            <h2 class="h5 card-title">Productos</h2>
-            <p class="card-text small text-secondary" id="descProductos"></p>
-            <a href="productos.html" class="btn btn-primary btn-sm">Ir a productos</a>
-       
-        </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card h-100">
-          <div class="card-body">
-            <h2 class="h5 card-title">Productos activos</h2>
-            <p class="display-6 mb-0" id="totalActivos">—</p>
-            <p class="card-text small text-secondary">de <span id="totalProductos">—</span> registrados</p>
+    <header>
+      <nav class="navbar navbar-expand-md navbar-toyworld py-3">
+        <div div id="appShell">class="container">
+          <a class="navbar-brand brand-title" href="index.html">🧸 ToyWorld</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+              <li class="nav-item"><a class="nav-link active" href="index.html">Panel</a></li>
+              <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+              <li class="nav-item"><a class="nav-link" href="carrito.html">Carrito <span id="badgeCarrito" class="badge rounded-pill bg-danger d-none">0</span></a></li>
+              <li class="nav-item"><a class="nav-link d-none" id="navMantenedor" href="mantenedor.html">Mantenedor</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-3">
+              <span class="small fw-medium text-secondary" id="navUsuario">@usuario</span>
+              <button class="btn btn-outline-danger btn-sm rounded-pill px-3" id="btnSalir">
+                <i class="fa-solid fa-right-from-bracket me-1"></i> Cerrar sesión
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </nav>
+    </header>
 
-      <div class="col-md-4">
-        <div class="card h-100">
-          <div class="card-body">
-            <h2 class="h5 card-title">Sin stock</h2>
-            <p class="display-6 mb-0" id="totalSinStock">—</p>
-            <p class="card-text small text-secondary">productos en cero</p>
+ <main class="container py-4">
+
+      <h1 class="h3 fw-bold text-dark mb-1">Hola, <span id="nombreUsuario" class="text-primary"></span></h1>
+      <p class="text-secondary mb-4">
+        Estás dentro como <span class="badge" id="badgeRol"></span>
+      </p>
+
+        <section aria-label="Resumen del inventario" class="row g-4">
+
+<!-- accesos a productos -->
+        <article class="col-md-4">
+          <div class="card card-dashboard h-100">
+            <div class="card-body d-flex flex-column p-4">
+              <h2 class="h5 card-title fw-bold text-dark mb-2">
+                <i class="fa-solid fa-boxes-stacked me-2 text-danger"></i>Productos
+              </h2>
+              <p class="card-text small text-secondary flex-grow-1" id="descProductos">
+                Accede a la sección de catálogo para ver y agregar artículos.
+              </p>
+              <a href="productos.html" id="btnAccesoSeccion" class="btn btn-toyworld btn-sm w-100 py-2 mt-3">
+                Ir a Productos
+              </a>
+            </div>
           </div>
-        </div>
-      </div>
+        </article>
+<!--  PRODUCTOS activos -->
 
-    </div>
-  </main>
 
-<script>
-/* ============ SEED DE PRODUCTOS ============ */
-/* Mismo seed que productos.html: la primera página que se abra siembra localStorage */
-const SEED_PRODUCTOS = [
-  { id:1, codigo:"NB-001", nombre:"Notebook Lenovo ThinkPad E14",   categoria:"Computación",    precio:749990, stock:12, activo:true  },
-  { id:2, codigo:"MN-002", nombre:'Monitor Samsung 27" 144Hz',      categoria:"Computación",    precio:189990, stock:30, activo:true  },
-  { id:3, codigo:"TC-003", nombre:"Teclado mecánico Redragon K552", categoria:"Periféricos",    precio:39990,  stock:45, activo:true  },
-  { id:4, codigo:"MS-004", nombre:"Mouse Logitech M170",            categoria:"Periféricos",    precio:12990,  stock:80, activo:true  },
-  { id:5, codigo:"RT-005", nombre:"Router TP-Link Archer AX10",     categoria:"Redes",          precio:54990,  stock:18, activo:true  },
-  { id:6, codigo:"SW-006", nombre:"Switch TP-Link 8 puertos",       categoria:"Redes",          precio:29990,  stock:0,  activo:false },
-  { id:7, codigo:"SD-007", nombre:"SSD Kingston NV2 1TB NVMe",      categoria:"Almacenamiento", precio:62990,  stock:25, activo:true  },
-  { id:8, codigo:"HD-008", nombre:"Disco duro externo WD 2TB",      categoria:"Almacenamiento", precio:74990,  stock:9,  activo:true  }
-];
 
-const KEY_SESION    = "inv_sesion";
-const KEY_PRODUCTOS = "inv_productos";
 
-const sesion = Sesion();
 
-if (!sesion) {
-  window.location.replace("login.html");
-} else {
-  /* textContent y no innerHTML: si el nombre trae etiquetas, se ven como texto */
-  document.getElementById("nombreUsuario").textContent = sesion.nombre;
-  document.getElementById("navUsuario").textContent    = sesion.usuario;
-  document.getElementById("badgeRol").textContent      = sesion.rol === "admin" ? "Administrador" : "Usuario";
-  document.getElementById("descProductos").textContent = sesion.rol === "admin"
-    ? "Crea, edita y elimina productos del catálogo."
-    : "Consulta el catálogo de productos disponibles.";
 
-  const productos = cargarProductos();
-  document.getElementById("totalProductos").textContent = productos.length;
-  document.getElementById("totalActivos").textContent   = productos.filter(p => p.activo).length;
-  document.getElementById("totalSinStock").textContent  = productos.filter(p => p.stock === 0).length;
-}
 
-document.getElementById("btnSalir").addEventListener("click", function () {
-  sessionStorage.removeItem(KEY_SESION);
-  window.location.replace("login.html");
-});
-
-function leerSesion() {
-  try {
-    const s = JSON.parse(sessionStorage.getItem(KEY_SESION));
-    if (!s || !s.usuario || !s.rol) return null;
-    if (s.expira && Date.now() > s.expira) {
-      sessionStorage.removeItem(KEY_SESION);
-      return null;
-    }
-    return s;
-  } catch (e) {
-    return null;
-  }
-}
-
-function cargarProductos() {
-  const guardados = localStorage.getItem(KEY_PRODUCTOS);
-  if (guardados) {
-    try { return JSON.parse(guardados); } catch (e) { /* cae al seed */ }
-  }
-  localStorage.setItem(KEY_PRODUCTOS, JSON.stringify(SEED_PRODUCTOS));
-  return SEED_PRODUCTOS;
-}
 </script>
 
 </body>
