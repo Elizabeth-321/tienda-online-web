@@ -6,28 +6,31 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToyWorld </title>
+    <title>ToyWorld - Iniciar sesión</title>
 
 </head>
 <body class="login-body">
-     <div class="wrapper">      <!--personalizado  -->
+     <main class="wrapper">      <!--personalizado  -->
         <div class="form-wrapper sign in">
-         <form action="">
-        <h1 class="h4 mb-1">Login</h1>
+         <form id="formLogin" novalidate>
+        <h1 class="h4 mb-1">🧸 Login</h1>
         <p class="text-secondary small mb-4">Ingresa con tu usuario para continuar.</p>
         <div id="alerta" class="alert alert-danger d-none"></div>
 
         <div class="mb-3">
           <label for="usuario" class="form-label">Usuario</label>
           <input type="text" class="form-control" id="usuario" maxlength="30" autocomplete="username" autofocus>
+          <div class="invalid-feedback" id="errorUsuario"></div>
         </div>
 
         <div class="mb-3">
           <label for="clave" class="form-label">Contraseña</label>
           <input type="password" class="form-control" id="clave" maxlength="64" autocomplete="current-password">
+          <div class="invalid-feedback" id="errorClave"></div>
         </div>
+
         <button type="button" class="btn btn-danger w-100" id="btnEntrar">Entrar</button>
-           <hr class="my-4">
+        <hr class="my-4">
         <p class="small text-secondary mb-0">
           Cuentas de prueba:<br>
           <code>admin / Admi123</code> — administrador<br>
@@ -36,8 +39,15 @@
         </form>
     </div>
 </div>
+</main>  
+
+  <footer class="login-footer text-center small text-white-50 py-3">
+    &copy; 2026 ToyWorld — Proyecto académico DSY1104, Desarrollo Fullstack II.
+  </footer>
+
    <!--   Js  del Login -->
-<script>
+  <script src="common.js"></script>
+  <script>
 
 const SEED_USUARIOS = [
   {id: 1, usuario: "admin", nombre : "Israel muñoz ",  email: "admin@example.com",   clave: "Admi123", rol: "admin",activo:true},
@@ -48,96 +58,127 @@ const SEED_USUARIOS = [
 
   
 //reglas de negocio para el login, se puede cambiar la cantidad de intentos y el tiempo de bloqueo
-const KEY_SESION   = "inv_sesion";
-const KEY_INTENTOS = "inv_intentos";
+
 const MAX_INTENTOS = 3;
 const BLOQUEO_MS   = 60000;
 
-const alerta =document.getElementById("alerta");
-const btnEntrar = document.getElementById("btnEntrar");
-const inputUsuario = document.getElementById("usuario");
-const inputClave = document.getElementById("clave");
 
-//funcion logica de validacion del formualrio,lo que hae el sistema
-function entrar(){
-ocultarError();
+  const alerta        = document.getElementById("alerta");
+  const btnEntrar      = document.getElementById("btnEntrar");
+  const inputUsuario   = document.getElementById("usuario");
+  const inputClave     = document.getElementById("clave");
+  const errorUsuario   = document.getElementById("errorUsuario");
+  const errorClave     = document.getElementById("errorClave");
 
-const espera = bloqueoRestante();
-if(espera>0){
-  mostrarError("Demasiados intentos fallidos. Intenta de nuevo en "+espera +"segundos.");
-  return;
-}
-const usuario= inputUsuario.value.trim();
-const clave  = inputClave.value.trim();
 
-if (!usuario || !clave) {
-    mostrarError("Escribe tu usuario y tu contraseña.");
-    return;
+  // Si ya había una sesión activa, no hace falta volver a loguearse
+  if (leerSesion()) {
+    window.location.replace("index.html");
   }
 
-  const encontrado = SEED_USUARIOS.find(function (u) {
-    return u.usuario.toLowerCase() === usuario.toLowerCase() && u.clave === clave;
-  });
+  /* --- Validación de campos controlada por JS --- */
+  function validarCampos() {
+    let valido = true;
+    limpiarValidacion();
 
-  if (!encontrado) {
-    registrarFallo();
-    /* Mensaje genérico a propósito: no revela si el usuario existe */
-    mostrarError("Usuario o contraseña incorrectos.");
-    inputClave.value = "";
-    return;
+    if (!inputUsuario.value.trim()) {
+      marcarInvalido(inputUsuario, errorUsuario, "Ingresa tu nombre de usuario.");
+      valido = false;
+    }
+    if (!inputClave.value.trim()) {
+      marcarInvalido(inputClave, errorClave, "Ingresa tu contraseña.");
+      valido = false;
+    } else if (inputClave.value.trim().length < 4) {
+      marcarInvalido(inputClave, errorClave, "La contraseña debe tener al menos 4 caracteres.");
+      valido = false;
+    }
+    return valido;
   }
 
-  if (!encontrado.activo) {
-    mostrarError("Tu cuenta está desactivada. Contacta al administrador.");
-    return;
+  function marcarInvalido(input, elError, mensaje) {
+    input.classList.add("is-invalid");
+    elError.textContent = mensaje;
   }
-//Es una API que nos permite guardar datos en la pc o celular del usuario de forma prmamnente
-  localStorage.removeItem(KEY_INTENTOS);
 
-  sessionStorage.setItem(KEY_SESION, JSON.stringify({
-    id:      encontrado.id,
-    usuario: encontrado.usuario,
-    nombre:  encontrado.nombre,
-    rol:     encontrado.rol,
-    expira:  Date.now() + 30 * 60 * 1000
-  }));
+  function limpiarValidacion() {
+    [inputUsuario, inputClave].forEach(i => i.classList.remove("is-invalid"));
+    errorUsuario.textContent = "";
+    errorClave.textContent = "";
+  }
 
-  window.location.href = "index.html";
-}
+  /* ---------- Lógica de autenticación ---------- */
+  function entrar() {
+    ocultarError();
+    if (!validarCampos()) return;
 
-function mostrarError(msg) {
-  alerta.textContent = msg;
-  alerta.classList.remove("d-none");
-}
+    const espera = bloqueoRestante();
+    if (espera > 0) {
+      mostrarError("Demasiados intentos fallidos. Intenta de nuevo en " + espera + " segundos.");
+      return;
+    }
 
-function ocultarError() {
-  alerta.classList.add("d-none");
-  alerta.textContent = "";
-}
+    const usuario = inputUsuario.value.trim();
+    const clave   = inputClave.value.trim();
 
-function bloqueoRestante() {
-  const d = JSON.parse(localStorage.getItem(KEY_INTENTOS) || '{"n":0,"hasta":0}');
-  return d.hasta > Date.now() ? Math.ceil((d.hasta - Date.now()) / 1000) : 0;
-}
+    const encontrado = SEED_USUARIOS.find(function (u) {
+      return u.usuario.toLowerCase() === usuario.toLowerCase() && u.clave === clave;
+    });
 
-function registrarFallo() {
-  const d = JSON.parse(localStorage.getItem(KEY_INTENTOS) || '{"n":0,"hasta":0}');
-  d.n++;
-  if (d.n >= MAX_INTENTOS) { d.hasta = Date.now() + BLOQUEO_MS; d.n = 0; }
-  localStorage.setItem(KEY_INTENTOS, JSON.stringify(d));
-}
+    if (!encontrado) {
+      registrarFallo();
+      /* Mensaje genérico a propósito: no revela si el usuario existe */
+      mostrarError("Usuario o contraseña incorrectos.");
+      inputClave.value = "";
+      return;
+    }
 
+    if (!encontrado.activo) {
+      mostrarError("Tu cuenta está desactivada. Contacta al administrador.");
+      return;
+    }
 
-//ESto evita que el usuario tenga que volver a poner sus credenciales si ya estaba logeado
-if(sessionStorage.getItem(KEY_SESION)){
-  window.location.href="index.html";
-}
+    localStorage.removeItem(KEY_INTENTOS);
 
-//eventos,contiene la lógica de validación la que revisa el usuario, la contraseña y los intentos
-btnEntrar.addEventListener("click",entrar);
-inputUsuario.addEventListener("keydown",e => {if(e.key ==="Enter")inputClave.focus();});
-inputClave.addEventListener("keydown",e => {if(e.key==="Enter")entrar();});
+    sessionStorage.setItem(KEY_SESION, JSON.stringify({
+      id:      encontrado.id,
+      usuario: encontrado.usuario,
+      nombre:  encontrado.nombre,
+      rol:     encontrado.rol,
+      expira:  Date.now() + 30 * 60 * 1000
+    }));
 
-</script>
+    window.location.href = "index.html";
+  }
+
+  function mostrarError(msg) {
+    alerta.textContent = msg;
+    alerta.classList.remove("d-none");
+  }
+
+  function ocultarError() {
+    alerta.classList.add("d-none");
+    alerta.textContent = "";
+  }
+
+  function bloqueoRestante() {
+    const d = JSON.parse(localStorage.getItem(KEY_INTENTOS) || '{"n":0,"hasta":0}');
+    return d.hasta > Date.now() ? Math.ceil((d.hasta - Date.now()) / 1000) : 0;
+  }
+
+  function registrarFallo() {
+    const d = JSON.parse(localStorage.getItem(KEY_INTENTOS) || '{"n":0,"hasta":0}');
+    d.n++;
+    if (d.n >= MAX_INTENTOS) { d.hasta = Date.now() + BLOQUEO_MS; d.n = 0; }
+    localStorage.setItem(KEY_INTENTOS, JSON.stringify(d));
+  }
+
+  // Eventos: click en Entrar, Enter para avanzar de campo o enviar
+  btnEntrar.addEventListener("click", entrar);
+  inputUsuario.addEventListener("keydown", e => { if (e.key === "Enter") inputClave.focus(); });
+  inputClave.addEventListener("keydown", e => { if (e.key === "Enter") entrar(); });
+  inputUsuario.addEventListener("input", () => inputUsuario.classList.remove("is-invalid"));
+  inputClave.addEventListener("input", () => inputClave.classList.remove("is-invalid"));
+
+  </script>
 </body>
 </html>
