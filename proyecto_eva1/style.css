@@ -51,15 +51,6 @@ h1 {
   background: #fff;
 
 }
-/*.wrapper:hover{
-    animation: animate 3s linear infinite;
-}
-@keyframes animate {
-    100%{
-        filter:hue-rotate(360deg);
-    }
-    
-}*le da /
 
 .form-wrapper{
     display: flex;
@@ -89,7 +80,54 @@ button{
     outline: none;
 }
 
-/* css de...*/
+/* css de index*/
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f4f6f9;
+}
+
+/* Navbar personalizado con estética ToyWorld */
+.navbar-toyworld {
+  background: #ffffff;
+  border-bottom: 2px solid #ed1a7c;
+  box-shadow: 0 4px 15px rgba(237, 26, 124, 0.1);
+}
+
+.brand-title {
+  color: #ed1a7c;
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+/* Tarjetas del Dashboard con sombra del Login */
+.card-dashboard {
+  border: none;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-dashboard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(237, 26, 124, 0.15);
+}
+
+/* Botón adaptado al estilo rosado/neón */
+.btn-toyworld {
+  background: #ed1a7c;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 30px;
+  border: none;
+  box-shadow: 0 0 10px rgba(237, 26, 124, 0.4);
+}
+
+.btn-toyworld:hover {
+  background: #d01369;
+  color: #fff;
+}
 
 
 
