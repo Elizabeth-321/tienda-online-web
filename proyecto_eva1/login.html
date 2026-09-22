@@ -1,21 +1,21 @@
-<!-- si el usuario es admin o user, se necesitatener la sesión funcionando para poder probar el resto del sitio. -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToyWorld - Iniciar sesión</title>
-
+  <meta charset="UTF-8">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToyWorld - Iniciar sesión</title>
 </head>
 <body class="login-body">
-     <main class="wrapper">      <!--personalizado  -->
-        <div class="form-wrapper sign in">
-         <form id="formLogin" novalidate>
-        <h1 class="h4 mb-1">🧸 Login</h1>
+
+  <main class="wrapper">
+    <div class="form-wrapper sign in">
+      <form id="formLogin" novalidate>
+        <h1 class="h4 mb-1">🧸 Login </h1>
         <p class="text-secondary small mb-4">Ingresa con tu usuario para continuar.</p>
-        <div id="alerta" class="alert alert-danger d-none"></div>
+        <div id="alerta" class="alert alert-danger d-none" role="alert"></div>
 
         <div class="mb-3">
           <label for="usuario" class="form-label">Usuario</label>
@@ -29,39 +29,39 @@
           <div class="invalid-feedback" id="errorClave"></div>
         </div>
 
-        <button type="button" class="btn btn-danger w-100" id="btnEntrar">Entrar</button>
+        <button type="button" class="btn btn-toyworld w-100" id="btnEntrar">Entrar</button>
+
         <hr class="my-4">
         <p class="small text-secondary mb-0">
           Cuentas de prueba:<br>
           <code>admin / Admi123</code> — administrador<br>
           <code>eli / eli123</code> — usuario
         </p>
-        </form>
+      </form>
     </div>
-</div>
-</main>  
+  </main>
 
   <footer class="login-footer text-center small text-white-50 py-3">
-    &copy; 2026 ToyWorld — Proyecto académico DSY1104, Desarrollo Fullstack II.
+    &copy; 2026 ToyWorld —  Desarrollo Fullstack II.
   </footer>
 
-   <!--   Js  del Login -->
   <script src="common.js"></script>
   <script>
 
-const SEED_USUARIOS = [
-  {id: 1, usuario: "admin", nombre : "Israel muñoz ",  email: "admin@example.com",   clave: "Admi123", rol: "admin",activo:true},
-  {id: 2, usuario: "alagos",nombre: "alejandra lagos",email: "alagos@example.com",  clave: "user123", rol: "user",activo:true},
-  {id: 3, usuario: "eli",   nombre:"Elizabeth lagos",  email: "el.lagos@example.com",clave: "eli123",  rol: "user",activo:true},
-  {id: 4, usuario: "afuente",   nombre:"Alfonzo fuentes",  email: "alfus@eample.com",clave: "alfo24",  rol: "user",activo:false}
-];
+  const SEED_USUARIOS = [
+    { id: 1, usuario: "admin",   nombre: "Israel Muñoz",    email: "admin@example.com",    clave: "Admi123", rol: "admin", activo: true  },
+    { id: 2, usuario: "alagos",  nombre: "Alejandra Lagos",  email: "alagos@example.com",   clave: "user123", rol: "user",  activo: true  },
+    { id: 3, usuario: "eli",     nombre: "Elizabeth Lagos",  email: "el.lagos@example.com", clave: "eli123",  rol: "user",  activo: true  },
+    { id: 4, usuario: "afuente", nombre: "Alfonso Fuentes",  email: "alfus@example.com",    clave: "alfo24",  rol: "user",  activo: false }
+  ];
 
-  
-//reglas de negocio para el login, se puede cambiar la cantidad de intentos y el tiempo de bloqueo
+  // Keys de almacenamiento
+  const KEY_SESION   = "inv_sesion";
+  const KEY_INTENTOS = "inv_intentos";
 
-const MAX_INTENTOS = 3;
-const BLOQUEO_MS   = 60000;
-
+  // Reglas de negocio para el login
+  const MAX_INTENTOS = 3;
+  const BLOQUEO_MS   = 60000;
 
   const alerta        = document.getElementById("alerta");
   const btnEntrar      = document.getElementById("btnEntrar");
@@ -70,13 +70,19 @@ const BLOQUEO_MS   = 60000;
   const errorUsuario   = document.getElementById("errorUsuario");
   const errorClave     = document.getElementById("errorClave");
 
+  // Si ya hay una sesión activa guardada, redirige directamente a index.html
+  (function verificarSesionExistente() {
+    try {
+      const s = JSON.parse(sessionStorage.getItem(KEY_SESION));
+      if (s && s.usuario && (!s.expira || Date.now() < s.expira)) {
+        window.location.replace("index.html");
+      }
+    } catch (e) {
+      sessionStorage.removeItem(KEY_SESION);
+    }
+  })();
 
-  // Si ya había una sesión activa, no hace falta volver a loguearse
-  if (leerSesion()) {
-    window.location.replace("index.html");
-  }
-
-  /* --- Validación de campos controlada por JS --- */
+  /* ---------- Validación de campos ---------- */
   function validarCampos() {
     let valido = true;
     limpiarValidacion();
@@ -126,7 +132,6 @@ const BLOQUEO_MS   = 60000;
 
     if (!encontrado) {
       registrarFallo();
-      /* Mensaje genérico a propósito: no revela si el usuario existe */
       mostrarError("Usuario o contraseña incorrectos.");
       inputClave.value = "";
       return;
@@ -139,12 +144,13 @@ const BLOQUEO_MS   = 60000;
 
     localStorage.removeItem(KEY_INTENTOS);
 
+    // Guarda la sesión activa en sessionStorage
     sessionStorage.setItem(KEY_SESION, JSON.stringify({
       id:      encontrado.id,
       usuario: encontrado.usuario,
       nombre:  encontrado.nombre,
       rol:     encontrado.rol,
-      expira:  Date.now() + 30 * 60 * 1000
+      expira:  Date.now() + 30 * 60 * 1000 // Expira en 30 minutos
     }));
 
     window.location.href = "index.html";
@@ -172,7 +178,7 @@ const BLOQUEO_MS   = 60000;
     localStorage.setItem(KEY_INTENTOS, JSON.stringify(d));
   }
 
-  // Eventos: click en Entrar, Enter para avanzar de campo o enviar
+  // Eventos
   btnEntrar.addEventListener("click", entrar);
   inputUsuario.addEventListener("keydown", e => { if (e.key === "Enter") inputClave.focus(); });
   inputClave.addEventListener("keydown", e => { if (e.key === "Enter") entrar(); });
