@@ -1,0 +1,224 @@
+/* ============================================================
+   ToyWorld — hoja de estilos externa compartida por todas las páginas
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #f4f6f9;
+  min-height: 100vh;
+}
+
+h1, h2 {
+  color: #212529;
+}
+
+
+
+
+/*=================== LOGIN =================*/
+
+.login-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: url('./img/fondo-jugueteria.avif') no-repeat center center;
+  background-size: cover;
+}
+
+.login-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+  z-index: 0;
+}
+
+.wrapper {
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  margin: 70px auto 20px;
+  padding: 35px;
+  box-shadow: 0 0 40px rgb(237, 26, 124);
+  border-radius: 15px;
+  background: #fff;
+}
+
+.wrapper h1 {
+  text-align: center;
+  color: #ed1a7c;
+}
+
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Solo los botones del login usan este look neón; el resto del sitio usa .btn-toyworld */
+.wrapper button {
+  width: 100%;
+  height: 44px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 30px;
+  border: none;
+  outline: none;
+}
+
+.login-footer {
+  position: relative;
+  z-index: 1;
+}
+
+
+
+
+
+
+/* =============== LAYOUT GENERAL (panel, catálogo, carrito, mantenedor) ============ */
+
+#appShell {
+  display: none;
+}
+#appShell.lista {
+  display: block;
+  animation: fadeIn .25s ease-in;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+main.container {
+  max-width: 1140px;
+}
+
+.site-footer {
+  border-top: 1px solid #e9ecef;
+  background: #fff;
+}
+
+/* Navbar personalizado con estética ToyWorld */
+.navbar-toyworld {
+  background: #ffffff;
+  border-bottom: 2px solid #ed1a7c;
+  box-shadow: 0 4px 15px rgba(237, 26, 124, 0.1);
+}
+
+.brand-title {
+  color: #ed1a7c;
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+.navbar-toyworld .nav-link {
+  color: #495057;
+  font-weight: 500;
+}
+.navbar-toyworld .nav-link.active,
+.navbar-toyworld .nav-link:hover {
+  color: #ed1a7c;
+}
+
+#badgeRol {
+  background-color: #f4d1e2;
+  color: #ed1a7c;
+  font-weight: 600;
+  padding: .4em .8em;
+}
+
+/* Tarjetas del Dashboard con sombra del Login */
+.card-dashboard {
+  border: none;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-dashboard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(237, 26, 124, 0.15);
+}
+
+/* Botón adaptado al estilo rosado/neón, usado fuera del login */
+.btn-toyworld {
+  background: #ed1a7c;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 30px;
+  border: none;
+  box-shadow: 0 0 10px rgba(237, 26, 124, 0.4);
+  padding: .5rem 1.25rem;
+}
+
+.btn-toyworld:hover {
+  background: #d01369;
+  color: #fff;
+}
+
+.btn-toyworld:disabled {
+  background: #d9d9d9;
+  color: #7a7a7a;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ============ CATÁLOGO DE PRODUCTOS ============ */
+
+.product-card .card-img-top {
+  height: 180px;
+  object-fit: cover;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  background: #f4f6f9;
+}
+
+.promo-video video {
+  background: #000;
+  max-height: 320px;
+  object-fit: cover;
+}
+
+/* ============ CARRITO ============ */
+
+.carrito-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* ============ FORMULARIOS: validación JS ============ */
+
+.is-invalid {
+  border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+  display: none;
+  color: #dc3545;
+  font-size: .825rem;
+  margin-top: .25rem;
+}
+
+.is-invalid ~ .invalid-feedback,
+.invalid-feedback:not(:empty) {
+  display: block;
+}
+
+
