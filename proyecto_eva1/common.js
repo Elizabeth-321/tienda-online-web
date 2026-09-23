@@ -24,7 +24,7 @@ const SEED_PRODUCTOS = [
   { id: 7, codigo: "JW-007", nombre: "Pista de Autos Hot Wheels",   categoria: "Vehículos",     precio: 29990, stock: 20, activo: true,
     img: "https://placehold.co/400x300/ffe3b3/b35c00?text=Hot+Wheels" },
   { id: 8, codigo: "JW-008", nombre: "Rompecabezas 1000 Piezas",    categoria: "Juegos Mesa",   precio: 9990,  stock: 0,  activo: true,
-    img: "https://placehold.co/400x300/d6ffe0/1a8a3f?text=Puzzle" }
+    img: "img/ChatGPT Image 23 sept 2026, 02_21_14 a.m.png" }
 ];
 
 function leerSesion() {

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToyWorld - Catálogo de Productos</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="appShell">
+
+    <header>
+      <nav class="navbar navbar-expand-md navbar-toyworld py-3">
+        <div class="container">
+          <a class="navbar-brand brand-title" href="index.html">🧸 ToyWorld</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+              <li class="nav-item"><a class="nav-link" href="index.html">Panel</a></li>
+              <li class="nav-item"><a class="nav-link active" href="productos.html">Productos</a></li>
+              <li class="nav-item"><a class="nav-link" href="carrito.html">Carrito <span id="badgeCarrito" class="badge rounded-pill bg-danger d-none">0</span></a></li>
+              <li class="nav-item"><a class="nav-link d-none" id="navMantenedor" href="mantenedor.html">Mantenedor</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-3">
+              <span class="small fw-medium text-secondary" id="navUsuario">@usuario</span>
+              <button class="btn btn-outline-danger btn-sm rounded-pill px-3" id="btnSalir">
+                <i class="fa-solid fa-right-from-bracket me-1"></i> Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container py-4">
+
+      <h1 class="h3 fw-bold text-dark mb-1">Catálogo de juguetes</h1>
+      <p class="text-secondary mb-4">Encuentra el juguete perfecto y agrégalo a tu carrito.</p>
+
+      <!-- Sección promocional con video embebido -->
+      <section aria-label="Video promocional" class="promo-video mb-5">
+        <div class="row align-items-center g-4">
+          <div class="col-md-6">
+            <video class="w-100 rounded-4 shadow-sm" controls poster="https://placehold.co/640x360/ed1a7c/ffffff?text=ToyWorld" preload="none">
+              <source src="https://www.pexels.com/es-es/download/video/5674718/" type="video/mp4">
+              Tu navegador no soporta la reproducción de video.
+            </video>
+          </div>
+          <div class="col-md-6">
+            <h2 class="h5 fw-bold text-dark">Conoce ToyWorld</h2>
+            <p class="text-secondary small">
+              Un vistazo rápido a nuestra tienda: así llegan los pedidos, así se ven nuestros
+              juguetes en acción.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filtros -->
+      <section aria-label="Filtros de búsqueda" class="row g-3 mb-4">
+        <div class="col-sm-6 col-md-4">
+          <label for="buscador" class="form-label small fw-medium">Buscar por nombre</label>
+          <input type="text" class="form-control" id="buscador" placeholder="Ej: Lego, Barbie...">
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <label for="filtroCategoria" class="form-label small fw-medium">Categoría</label>
+          <select class="form-select" id="filtroCategoria">
+            <option value="">Todas</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Catálogo -->
+      <section aria-label="Listado de productos" class="row g-4" id="grillaProductos">
+        <!-- Las tarjetas de producto se insertan aquí vía JS -->
+      </section>
+
+      <p id="sinResultados" class="text-center text-secondary my-5 d-none">
+        No encontramos juguetes que coincidan con tu búsqueda.
+      </p>
+
+    </main>
+
+    <footer class="site-footer text-center small text-secondary py-4 mt-4">
+      &copy; 2026 ToyWorld — Proyecto académico DSY1104, Desarrollo Fullstack II · Equipo ToyWorld
+    </footer>
+
+  </div>
+
+  <!-- Toast de confirmación al agregar al carrito -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="toastCarrito" class="toast align-items-center text-bg-success border-0" role="alert">
+      <div class="d-flex">
+        <div class="toast-body" id="toastMensaje">Producto agregado al carrito.</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="common.js"></script>
+  <script>
+
+  const sesion = exigirSesion();
+  let productos = [];
+  let toast = null;
+
+  if (sesion) {
+    pintarSesionEnNav(sesion);
+    productos = cargarProductos();
+    poblarCategorias(productos);
+    renderizarProductos(productos);
+    toast = new bootstrap.Toast(document.getElementById("toastCarrito"));
+    document.getElementById("appShell").classList.add("lista");
+  }
+
+  document.getElementById("buscador").addEventListener("input", aplicarFiltros);
+  document.getElementById("filtroCategoria").addEventListener("change", aplicarFiltros);
+
+  function poblarCategorias(lista) {
+    const select = document.getElementById("filtroCategoria");
+    const categorias = [...new Set(lista.map(p => p.categoria))].sort();
+    categorias.forEach(cat => {
+      const opt = document.createElement("option");
+      opt.value = cat;
+      opt.textContent = cat;
+      select.appendChild(opt);
+    });
+  }
+
+  function aplicarFiltros() {
+    const texto = document.getElementById("buscador").value.trim().toLowerCase();
+    const categoria = document.getElementById("filtroCategoria").value;
+
+    const filtrados = productos.filter(p => {
+      const coincideTexto = p.nombre.toLowerCase().includes(texto);
+      const coincideCategoria = !categoria || p.categoria === categoria;
+      return coincideTexto && coincideCategoria;
+    });
+
+    renderizarProductos(filtrados);
+  }
+
+  function renderizarProductos(lista) {
+    const grilla = document.getElementById("grillaProductos");
+    const sinResultados = document.getElementById("sinResultados");
+    grilla.innerHTML = "";
+
+    if (lista.length === 0) {
+      sinResultados.classList.remove("d-none");
+      return;
+    }
+    sinResultados.classList.add("d-none");
+
+    lista.forEach(p => {
+      const sinStock = p.stock === 0 || !p.activo;
+
+      const col = document.createElement("article");
+      col.className = "col-sm-6 col-lg-3";
+      col.innerHTML = `
+        <div class="card card-dashboard h-100 product-card">
+          <img src="${p.img}" class="card-img-top" alt="Foto de ${p.nombre}">
+          <div class="card-body d-flex flex-column p-3">
+            <span class="badge bg-light text-dark border mb-2 align-self-start">${p.categoria}</span>
+            <h3 class="h6 fw-bold text-dark mb-1">${p.nombre}</h3>
+            <p class="small text-secondary mb-2">Código: ${p.codigo}</p>
+            <p class="fw-bold text-danger mb-2">${formatoCLP(p.precio)}</p>
+            <p class="small ${sinStock ? "text-danger" : "text-success"} mb-3">
+              ${sinStock ? "Sin stock" : p.stock + " disponibles"}
+            </p>
+            <button class="btn btn-toyworld btn-sm w-100 mt-auto" data-id="${p.id}" ${sinStock ? "disabled" : ""}>
+              <i class="fa-solid fa-cart-plus me-1"></i> Agregar al carrito
+            </button>
+          </div>
+        </div>
+      `;
+      grilla.appendChild(col);
+    });
+
+    grilla.querySelectorAll("button[data-id]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = Number(btn.dataset.id);
+        const ok = agregarAlCarrito(id);
+        mostrarToast(ok ? "Producto agregado al carrito." : "No hay más stock disponible.", ok);
+      });
+    });
+  }
+
+  function mostrarToast(mensaje, exito) {
+    const toastEl = document.getElementById("toastCarrito");
+    toastEl.classList.toggle("text-bg-success", exito);
+    toastEl.classList.toggle("text-bg-danger", !exito);
+    document.getElementById("toastMensaje").textContent = mensaje;
+    toast.show();
+  }
+
+  </script>
+</body>
+</html>

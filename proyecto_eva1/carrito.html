@@ -1,17 +1,260 @@
-<!-- la vista final del cliente,
- <!-su funcion es mostrar los productos que el usuario seleccionó en la portada y calcular el total.  -->
+<!-- Vista final del cliente: muestra los productos seleccionados y calcula el total. -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToyWorld - Tienda de Juguetes</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToyWorld - Carrito de Compras</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
-</body>
-   
-</html>
 
+  <div id="appShell">
+
+    <header>
+      <nav class="navbar navbar-expand-md navbar-toyworld py-3">
+        <div class="container">
+          <a class="navbar-brand brand-title" href="index.html">🧸 ToyWorld</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+              <li class="nav-item"><a class="nav-link" href="index.html">Panel</a></li>
+              <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+              <li class="nav-item"><a class="nav-link active" href="carrito.html">Carrito <span id="badgeCarrito" class="badge rounded-pill bg-danger d-none">0</span></a></li>
+              <li class="nav-item"><a class="nav-link d-none" id="navMantenedor" href="mantenedor.html">Mantenedor</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-3">
+              <span class="small fw-medium text-secondary" id="navUsuario">@usuario</span>
+              <button class="btn btn-outline-danger btn-sm rounded-pill px-3" id="btnSalir">
+                <i class="fa-solid fa-right-from-bracket me-1"></i> Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container py-4">
+
+      <h1 class="h3 fw-bold text-dark mb-4">Tu carrito de compras</h1>
+
+      <section aria-label="Detalle del carrito">
+        <div id="carritoVacio" class="text-center text-secondary py-5 d-none">
+          <i class="fa-solid fa-cart-shopping fa-2x mb-3"></i>
+          <p>Tu carrito está vacío. <a href="productos.html">Ir al catálogo</a></p>
+        </div>
+
+        <div id="carritoConItems" class="d-none">
+          <div class="table-responsive mb-4">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Precio unitario</th>
+                  <th style="width:140px;">Cantidad</th>
+                  <th>Subtotal</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="filasCarrito"></tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-end mb-5">
+            <div class="text-end">
+              <p class="text-secondary mb-1">Total a pagar</p>
+              <p class="h3 fw-bold text-danger" id="totalCarrito">$0</p>
+            </div>
+          </div>
+
+          <!-- Formulario de despacho / checkout -->
+          <section aria-label="Datos de despacho" class="card card-dashboard">
+            <div class="card-body p-4">
+              <h2 class="h5 fw-bold text-dark mb-3">Datos de despacho</h2>
+              <form id="formCheckout" novalidate>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="ccNombre" class="form-label">Nombre completo</label>
+                    <input type="text" class="form-control" id="ccNombre" autocomplete="name">
+                    <div class="invalid-feedback" id="errNombre"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="ccEmail" class="form-label">Correo electrónico</label>
+                    <input type="email" class="form-control" id="ccEmail" autocomplete="email">
+                    <div class="invalid-feedback" id="errEmail"></div>
+                  </div>
+                  <div class="col-12">
+                    <label for="ccDireccion" class="form-label">Dirección de despacho</label>
+                    <input type="text" class="form-control" id="ccDireccion" autocomplete="street-address">
+                    <div class="invalid-feedback" id="errDireccion"></div>
+                  </div>
+                </div>
+                <div id="alertaCheckout" class="alert alert-success d-none mt-3" role="alert"></div>
+                <button type="button" class="btn btn-toyworld mt-4" id="btnConfirmar">
+                  <i class="fa-solid fa-circle-check me-1"></i> Confirmar compra
+                </button>
+              </form>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer text-center small text-secondary py-4 mt-4">
+      &copy; 2026 ToyWorld — Proyecto académico DSY1104, Desarrollo Fullstack II · Equipo ToyWorld
+    </footer>
+
+  </div>
+
+  <script src="common.js"></script>
+  <script>
+
+  const sesion = exigirSesion();
+
+  if (sesion) {
+    pintarSesionEnNav(sesion);
+    renderizarCarrito();
+    document.getElementById("appShell").classList.add("lista");
+  }
+
+  function renderizarCarrito() {
+    const carrito = cargarCarrito();
+    const productos = cargarProductos();
+    const filas = document.getElementById("filasCarrito");
+    filas.innerHTML = "";
+
+    if (carrito.length === 0) {
+      document.getElementById("carritoVacio").classList.remove("d-none");
+      document.getElementById("carritoConItems").classList.add("d-none");
+      return;
+    }
+    document.getElementById("carritoVacio").classList.add("d-none");
+    document.getElementById("carritoConItems").classList.remove("d-none");
+
+    let total = 0;
+
+    carrito.forEach(item => {
+      const producto = productos.find(p => p.id === item.id);
+      if (!producto) return;
+
+      const subtotal = producto.precio * item.cantidad;
+      total += subtotal;
+
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>
+          <div class="d-flex align-items-center gap-2">
+            <img src="${producto.img}" alt="Foto de ${producto.nombre}" class="carrito-thumb">
+            <span>${producto.nombre}</span>
+          </div>
+        </td>
+        <td>${formatoCLP(producto.precio)}</td>
+        <td>
+          <input type="number" class="form-control form-control-sm cantidad-input" data-id="${producto.id}"
+                 value="${item.cantidad}" min="1" max="${producto.stock}">
+        </td>
+        <td class="fw-bold subtotal-celda">${formatoCLP(subtotal)}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-danger" data-eliminar="${producto.id}" title="Eliminar">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      `;
+      filas.appendChild(fila);
+    });
+
+    document.getElementById("totalCarrito").textContent = formatoCLP(total);
+
+    filas.querySelectorAll(".cantidad-input").forEach(input => {
+      input.addEventListener("change", () => cambiarCantidad(Number(input.dataset.id), input));
+    });
+    filas.querySelectorAll("[data-eliminar]").forEach(btn => {
+      btn.addEventListener("click", () => eliminarDelCarrito(Number(btn.dataset.eliminar)));
+    });
+  }
+
+  function cambiarCantidad(idProducto, input) {
+    const productos = cargarProductos();
+    const producto = productos.find(p => p.id === idProducto);
+    let carrito = cargarCarrito();
+    const item = carrito.find(i => i.id === idProducto);
+    if (!producto || !item) return;
+
+    let cantidad = parseInt(input.value, 10);
+
+    if (!cantidad || cantidad < 1) cantidad = 1;
+    if (cantidad > producto.stock) cantidad = producto.stock;
+
+    item.cantidad = cantidad;
+    guardarCarrito(carrito);
+    renderizarCarrito();
+  }
+
+  function eliminarDelCarrito(idProducto) {
+    let carrito = cargarCarrito().filter(i => i.id !== idProducto);
+    guardarCarrito(carrito);
+    renderizarCarrito();
+  }
+
+  /* ---------- Formulario de checkout: validación JS por campo ---------- */
+  const ccNombre    = document.getElementById("ccNombre");
+  const ccEmail     = document.getElementById("ccEmail");
+  const ccDireccion = document.getElementById("ccDireccion");
+  const alertaCheckout = document.getElementById("alertaCheckout");
+
+  document.getElementById("btnConfirmar")?.addEventListener("click", confirmarCompra);
+  [ccNombre, ccEmail, ccDireccion].forEach(input => {
+    input?.addEventListener("input", () => input.classList.remove("is-invalid"));
+  });
+
+  function confirmarCompra() {
+    alertaCheckout.classList.add("d-none");
+    if (!validarCheckout()) return;
+
+    guardarCarrito([]);
+    alertaCheckout.textContent = "¡Compra confirmada! Te llegará un correo con el detalle de tu pedido a " + ccEmail.value.trim() + ".";
+    alertaCheckout.classList.remove("d-none");
+    document.getElementById("formCheckout").reset();
+    setTimeout(renderizarCarrito, 1500);
+  }
+
+  function validarCheckout() {
+    let valido = true;
+
+    if (!ccNombre.value.trim()) {
+      marcarInvalidoCheckout(ccNombre, "errNombre", "Ingresa tu nombre completo.");
+      valido = false;
+    }
+
+    const email = ccEmail.value.trim();
+    const patronEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      marcarInvalidoCheckout(ccEmail, "errEmail", "Ingresa tu correo electrónico.");
+      valido = false;
+    } else if (!patronEmail.test(email)) {
+      marcarInvalidoCheckout(ccEmail, "errEmail", "El correo no tiene un formato válido (ej: nombre@correo.com).");
+      valido = false;
+    }
+
+    if (!ccDireccion.value.trim()) {
+      marcarInvalidoCheckout(ccDireccion, "errDireccion", "Ingresa tu dirección de despacho.");
+      valido = false;
+    }
+
+    return valido;
+  }
+
+  function marcarInvalidoCheckout(input, idError, mensaje) {
+    input.classList.add("is-invalid");
+    document.getElementById(idError).textContent = mensaje;
+  }
+
+  </script>
+</body>
+</html>
