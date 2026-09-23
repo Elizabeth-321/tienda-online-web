@@ -1,14 +1,311 @@
 <!-- mantenedor de usuarios y productos -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToyWorld - Tienda de Juguetes</title>
-</head>
-<body>
+    <title>ToyWorld - Mantenedor de Productos</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
     
+</head>
+
+<body>
+    <div id="appShell">
+        <header>
+            <nav class="navbar navbar-expand-md navbar-toyworld py-3">
+                <div class="container">
+                    <a class="navbar-brand brand-tittle" href="index.html">🧸 ToyWorld</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navMenu">
+                        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                            <li class="nav-item"><a class="nav-link" href="index.html">Panel</a></li>
+                            <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+                            <li class="nav-item"><a class="nav-link" href="carrito.html">Carrito</a></li>
+                            <li class="nav-item"><a class="nav-link active" id="navMantenedor"
+                                    href="mantenedor.html">Mantenedor</a></li>
+                        </ul>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="small fw-medium text-secondary" id="navUsuario">@usuario</span>
+                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3" id="btnSalir">
+                                <i class="fa-solid fa-rigth-from-bracket me-1"></i>Cerrar sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container py-4">
+
+            <h1 class="h3 fw-bold text-dark mb-1">Mantenedor de productos</h1>
+            <p class="text-secondary mb-4">Crea, edita y desactiva los juguetes del catálogo.</p>
+
+            <!-- Formulario de alta / edición -->
+            <section aria-label="Formulario de prodcuto" class="card card-dashboard mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 fw-bold text-dark mb-3" id="tituloFormulario">Nuevo Producto</h2>
+                    <form id="formProducto" novalidate>
+                        <input type="hidden" id="pId">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="pCodigo" class="form-label">Código</label>
+                                <input type="text" class="form-control" id="pCodigo" placeholder="JW-009">
+                                <div class="invalid-feedback" id="errCodigo"></div>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="pNombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="pNombre" placeholder="Nombre del juguete">
+                                <div class="invalid-feedback" id="errNombre"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="pCategoria" class="form-label">Categoría</label>
+                                <input type="text" class="form-control" id="pCategoria" placeholder="Ej: Peluches"
+                                    list="listaCategorias">
+                                <datalist id="listaCategorias"></datalist>
+                                <div class="invalid-feedback" id="errCategoria"></div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="pPrecio" class="form-label">Precio (CLP)</label>
+                                <input type="number" class="form-control" id="pPrecio" min="0" placeholder="0">
+                                <div class="invalid-feedback" id="errPrecio"></div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="pStock" class="form-label">Stock</label>
+                                <input type="number" class="form-control" id="pStock" min="0" placeholder="0">
+                                <div class="invalid-feedback" id="errStock"></div>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="pActivo" checked>
+                                    <label class="form-check-label" for="pActivo">Producto activo</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="alertaProducto" class="alert alert-success d-none mt-3" role="alert"></div>
+
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="button" class="btn btn-toyworld" id="btnGuardar">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> Guardar producto
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary d-none" id="btnCancelarEdicion">
+                                Cancelar edición
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Tabla de productos -->
+            <section aria-label="Listado de productos">
+                <div class="table-responsive">
+                    <table class="table align-middle table-hover">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Estado</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="filasProductos"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+        <footer class="site-footer text-center small text-secondary py-4 mt-4">
+            &copy; 2026 ToyWorld — Proyecto académico DSY1104, Desarrollo Fullstack II · Equipo ToyWorld
+        </footer>
+    </div>
+
+    <script src="common.js"></script>
+    <script>
+
+        const sesion = exigirSesion(["admin"]); // solo el rol admin puede entrar aquí
+        let productos = [];
+
+        if (sesion) {
+            pintarSesionEnNav(sesion);
+            productos = cargarProductos();
+            poblarCategorias();
+            renderizarTabla();
+            document.getElementById("appShell").classList.add("lista");
+        }
+
+        function poblarCategorias() {
+            const datalist = document.getElementById("listaCategorias");
+            const categorias = [...new Set(productos.map(p => p.categoria))].sort();
+            datalist.innerHTML = categorias.map(c => `<option value="${c}"></option>`).join("");
+        }
+
+        function renderizarTabla() {
+            const filas = document.getElementById("filasProductos");
+            filas.innerHTML = "";
+
+            productos.forEach(p => {
+                const fila = document.createElement("tr");
+                fila.innerHTML = `
+        <td>${p.codigo}</td>
+        <td>${p.nombre}</td>
+        <td>${p.categoria}</td>
+        <td>${formatoCLP(p.precio)}</td>
+        <td>${p.stock}</td>
+        <td>
+          <span class="badge ${p.activo ? "bg-success" : "bg-secondary"}">
+            ${p.activo ? "Activo" : "Inactivo"}
+          </span>
+        </td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-primary me-1" data-editar="${p.id}" title="Editar">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-danger" data-eliminar="${p.id}" title="Eliminar">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      `;
+                filas.appendChild(fila);
+            });
+
+            filas.querySelectorAll("[data-editar]").forEach(btn => {
+                btn.addEventListener("click", () => cargarEnFormulario(Number(btn.dataset.editar)));
+            });
+            filas.querySelectorAll("[data-eliminar]").forEach(btn => {
+                btn.addEventListener("click", () => eliminarProducto(Number(btn.dataset.eliminar)));
+            });
+        }
+
+        /* ---------- Formulario: alta / edición con validación JS ---------- */
+        const campos = {
+            id: document.getElementById("pId"),
+            codigo: document.getElementById("pCodigo"),
+            nombre: document.getElementById("pNombre"),
+            categoria: document.getElementById("pCategoria"),
+            precio: document.getElementById("pPrecio"),
+            stock: document.getElementById("pStock"),
+            activo: document.getElementById("pActivo")
+        };
+        const alertaProducto = document.getElementById("alertaProducto");
+
+        [campos.codigo, campos.nombre, campos.categoria, campos.precio, campos.stock].forEach(input => {
+            input.addEventListener("input", () => input.classList.remove("is-invalid"));
+        });
+
+        document.getElementById("btnGuardar").addEventListener("click", guardarProducto);
+        document.getElementById("btnCancelarEdicion").addEventListener("click", limpiarFormulario);
+
+        function cargarEnFormulario(id) {
+            const p = productos.find(pr => pr.id === id);
+            if (!p) return;
+            campos.id.value = p.id;
+            campos.codigo.value = p.codigo;
+            campos.nombre.value = p.nombre;
+            campos.categoria.value = p.categoria;
+            campos.precio.value = p.precio;
+            campos.stock.value = p.stock;
+            campos.activo.checked = p.activo;
+
+            document.getElementById("tituloFormulario").textContent = "Editando: " + p.nombre;
+            document.getElementById("btnCancelarEdicion").classList.remove("d-none");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function limpiarFormulario() {
+            document.getElementById("formProducto").reset();
+            campos.id.value = "";
+            campos.activo.checked = true;
+            document.getElementById("tituloFormulario").textContent = "Nuevo producto";
+            document.getElementById("btnCancelarEdicion").classList.add("d-none");
+            [campos.codigo, campos.nombre, campos.categoria, campos.precio, campos.stock].forEach(i => i.classList.remove("is-invalid"));
+        }
+
+        function validarProducto() {
+            let valido = true;
+
+            if (!campos.codigo.value.trim()) {
+                marcarInvalido(campos.codigo, "errCodigo", "El código es obligatorio.");
+                valido = false;
+            }
+            if (!campos.nombre.value.trim()) {
+                marcarInvalido(campos.nombre, "errNombre", "El nombre es obligatorio.");
+                valido = false;
+            }
+            if (!campos.categoria.value.trim()) {
+                marcarInvalido(campos.categoria, "errCategoria", "Indica una categoría.");
+                valido = false;
+            }
+            const precio = Number(campos.precio.value);
+            if (campos.precio.value === "" || isNaN(precio) || precio < 0) {
+                marcarInvalido(campos.precio, "errPrecio", "Ingresa un precio válido (0 o mayor).");
+                valido = false;
+            }
+            const stock = Number(campos.stock.value);
+            if (campos.stock.value === "" || isNaN(stock) || stock < 0 || !Number.isInteger(stock)) {
+                marcarInvalido(campos.stock, "errStock", "Ingresa un stock válido (número entero, 0 o mayor).");
+                valido = false;
+            }
+            return valido;
+        }
+
+        function marcarInvalido(input, idError, mensaje) {
+            input.classList.add("is-invalid");
+            document.getElementById(idError).textContent = mensaje;
+        }
+
+        function guardarProducto() {
+            alertaProducto.classList.add("d-none");
+            if (!validarProducto()) return;
+
+            const idEditado = campos.id.value ? Number(campos.id.value) : null;
+
+            const datos = {
+                codigo: campos.codigo.value.trim(),
+                nombre: campos.nombre.value.trim(),
+                categoria: campos.categoria.value.trim(),
+                precio: Number(campos.precio.value),
+                stock: Number(campos.stock.value),
+                activo: campos.activo.checked
+            };
+
+            if (idEditado) {
+                const p = productos.find(pr => pr.id === idEditado);
+                Object.assign(p, datos);
+                alertaProducto.textContent = "Producto actualizado correctamente.";
+            } else {
+                const nuevoId = productos.length ? Math.max(...productos.map(p => p.id)) + 1 : 1;
+                datos.img = "https://placehold.co/400x300/ffd6e3/ed1a7c?text=" + encodeURIComponent(datos.nombre);
+                productos.push({ id: nuevoId, ...datos });
+                alertaProducto.textContent = "Producto agregado correctamente.";
+            }
+
+            guardarProductos(productos);
+            poblarCategorias();
+            renderizarTabla();
+            limpiarFormulario();
+            alertaProducto.classList.remove("d-none");
+        }
+
+        function eliminarProducto(id) {
+            if (!confirm("¿Eliminar este producto del catálogo?")) return;
+            productos = productos.filter(p => p.id !== id);
+            guardarProductos(productos);
+            renderizarTabla();
+        }
+
+    </script>
+
+
+
 </body>
+
 </html>
