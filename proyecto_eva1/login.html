@@ -13,7 +13,7 @@
   <main class="wrapper">
     <div class="form-wrapper sign in">
       <form id="formLogin" novalidate>
-        <h1 class="h4 mb-1">🧸 Login </h1>
+        <h1 class="h4 mb-1">🧸 Bienvenido a ToyWorld </h1>
         <p class="text-secondary small mb-4">Ingresa con tu usuario para continuar.</p>
         <div id="alerta" class="alert alert-danger d-none" role="alert"></div>
 
@@ -34,8 +34,8 @@
         <hr class="my-4">
         <p class="small text-secondary mb-0">
           Cuentas de prueba:<br>
-          <code>admin / Admi123</code> — administrador<br>
-          <code>eli / eli123</code> — usuario
+          <code>admin/admin123</code> — administrador<br>
+          <code>user/user123</code> — usuario
         </p>
       </form>
     </div>
@@ -49,8 +49,8 @@
   <script>
 
   const SEED_USUARIOS = [
-    { id: 1, usuario: "admin",   nombre: "Ruben Sierra",    email: "admin@example.com",    clave: "Admi123", rol: "admin", activo: true  },
-    { id: 2, usuario: "alagos",  nombre: "Alejandra Lagos",  email: "alagos@example.com",   clave: "user123", rol: "user",  activo: true  },
+    { id: 1, usuario: "admin",   nombre: "Fernando Campos",    email: "admin@example.com",    clave: "admin123", rol: "admin", activo: true  },
+    { id: 2, usuario: "user",  nombre: "Alejandra Lagos",  email: "alagos@example.com",   clave: "user123", rol: "user",  activo: true  },
     { id: 3, usuario: "eli",     nombre: "Elizabeth Lagos",  email: "el.lagos@example.com", clave: "eli123",  rol: "user",  activo: true  },
     { id: 4, usuario: "afuente", nombre: "Alfonso Fuentes",  email: "alfus@example.com",    clave: "alfo24",  rol: "user",  activo: false }
   ];
