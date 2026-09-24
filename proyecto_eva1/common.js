@@ -1,6 +1,7 @@
 
 /*  LOGICA COMPARTIDA: SESION,CATALOGO DE PRODUCTOS Y CARRITO DE COMPRA  */
 
+
 const KEY_SESION = "inv_sesion";
 const KEY_PRODUCTOS = "inv_productos";
 const KEY_CARRITO = "inv_carrito";
