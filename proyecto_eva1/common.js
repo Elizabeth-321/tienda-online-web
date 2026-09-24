@@ -11,7 +11,7 @@ const KEY_INTENTOS = "inv_intentos";
 
 const SEED_PRODUCTOS = [
   { id: 1, codigo: "JW-001", nombre: "Oso de Peluche Gigante 1m",   categoria: "Peluches",     precio: 19990, stock: 12, activo: true,
-    img: "https://placehold.co/400x300/ffd6e3/ed1a7c?text=Oso+de+Peluche" },
+    img: "./img/oso de peluche gigante.webp" },
   { id: 2, codigo: "JW-002", nombre: "Auto Ferrari Control Remoto", categoria: "Vehículos",    precio: 24990, stock: 30, activo: true,
     img: "https://placehold.co/400x300/ffe3b3/b35c00?text=Auto+Control+Remoto" },
   { id: 3, codigo: "JW-003", nombre: "Set Lego Star Wars X-Wing",   categoria: "Construcción", precio: 45990, stock: 15, activo: true,
