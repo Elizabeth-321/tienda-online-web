@@ -222,3 +222,22 @@ main.container {
 }
 
 
+/* ============ CARRUSEL "¡DEL MOMENTO!" ============ */
+.carrusel-full {
+  width: 100vw;
+  height: 70vh;
+  min-height: 1080px;
+  max-height: 1600px;
+}
+.carrusel-full .carousel-item img {
+  object-fit: cover;
+  /* recorta la imagen para llenar el espacio sin deformarla */
+}
+.carrusel-full .carousel-caption {
+  background: rgba(0, 0, 0, 0.11);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  bottom: 0.1rem;
+}
+
+
